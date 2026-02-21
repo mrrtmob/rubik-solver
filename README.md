@@ -2,6 +2,10 @@
 
 A TypeScript implementation of Kociemba's two-phase algorithm for solving the Rubik's Cube.
 
+## Live Demo
+
+[Demo](https://rubik-solver-ui.vercel.app/)
+
 ## Installation
 
 ```bash
@@ -67,28 +71,32 @@ console.log(`Solution (${solution!.split(' ').length} moves):`, solution);
 ## API
 
 ### `initSolver()`
+
 Pre-computes move and pruning tables. Must be called before `solve()` or `scramble()`. Safe to call multiple times — subsequent calls are no-ops.
 
 ### `solve(cube, maxDepth?)`
+
 Solves the given `Cube` instance. Returns a move string or `null` if no solution found within `maxDepth` (default: 22).
 
 ### `scramble()`
+
 Returns a random scramble sequence as a move string.
 
 ### `Cube`
+
 The main cube class.
 
-| Method / Property | Description |
-|---|---|
-| `new Cube()` | Creates a solved cube |
-| `.move(alg)` | Applies an algorithm string in place |
-| `.clone()` | Returns a deep copy |
-| `.isSolved()` | Returns `true` if the cube is solved |
-| `.asString()` | Returns the 54-char facelet string |
-| `.randomize()` | Randomizes the cube in place |
-| `Cube.fromString(str)` | Parses a 54-char facelet string |
-| `Cube.random()` | Returns a new random cube |
-| `Cube.inverse(alg)` | Inverts an algorithm string |
+| Method / Property        | Description                            |
+| ------------------------ | -------------------------------------- |
+| `new Cube()`           | Creates a solved cube                  |
+| `.move(alg)`           | Applies an algorithm string in place   |
+| `.clone()`             | Returns a deep copy                    |
+| `.isSolved()`          | Returns `true` if the cube is solved |
+| `.asString()`          | Returns the 54-char facelet string     |
+| `.randomize()`         | Randomizes the cube in place           |
+| `Cube.fromString(str)` | Parses a 54-char facelet string        |
+| `Cube.random()`        | Returns a new random cube              |
+| `Cube.inverse(alg)`    | Inverts an algorithm string            |
 
 ## Architecture
 
@@ -107,4 +115,5 @@ src/
 ```
 
 ## License
+
 MIT
