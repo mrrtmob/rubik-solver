@@ -186,6 +186,48 @@ export class Cube {
 
   // ── Solved check ──────────────────────────────────────────────────
 
+  /**
+   * Verifies the cube state is mathematically valid.
+   * Returns true if valid, or an error message string if not.
+   */
+  public verify(): true | string {
+    // Check all corners are present and unique
+    const cornerCount = new Int8Array(8);
+    for (let i = 0; i < 8; i++) {
+      if (this.cp[i] === -1) return 'Invalid cube: Unrecognized or missing corners.';
+      cornerCount[this.cp[i]]++;
+    }
+    for (let i = 0; i < 8; i++)
+      if (cornerCount[i] !== 1) return 'Invalid cube: Duplicate corner detected.';
+
+    // Check all edges are present and unique
+    const edgeCount = new Int8Array(12);
+    for (let i = 0; i < 12; i++) {
+      if (this.ep[i] === -1) return 'Invalid cube: Unrecognized or missing edges.';
+      edgeCount[this.ep[i]]++;
+    }
+    for (let i = 0; i < 12; i++)
+      if (edgeCount[i] !== 1) return 'Invalid cube: Duplicate edge detected.';
+
+    // Corner orientation sum must be divisible by 3
+    let twistSum = 0;
+    for (let i = 0; i < 8; i++) twistSum += this.co[i];
+    if (twistSum % 3 !== 0)
+      return 'Invalid cube: Corner twist error (1 corner needs twisting).';
+
+    // Edge orientation sum must be divisible by 2
+    let flipSum = 0;
+    for (let i = 0; i < 12; i++) flipSum += this.eo[i];
+    if (flipSum % 2 !== 0)
+      return 'Invalid cube: Edge flip error (1 edge needs flipping).';
+
+    // Corner and edge permutation parities must match
+    if (this.cornerParity() !== this.edgeParity())
+      return 'Invalid cube: Parity error (2 edges or 2 corners need swapping).';
+
+    return true;
+  }
+
   public isSolved(): boolean {
     const clone = this.clone();
     clone.move(clone.upright());
