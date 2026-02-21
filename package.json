@@ -1,5 +1,8 @@
 {
-  "name": "rubik-solver",
+  "name": "@mrrtmob/rubik-solver",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.1.0",
   "description": "Rubik's Cube solver using Kociemba's two-phase algorithm",
   "main": "dist/index.js",

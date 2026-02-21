@@ -92,65 +92,65 @@ function _solveUpright(cube: Cube, maxDepth: number): string | null {
     nextMoves1.push(n1); nextMoves2.push(n2);
   }
 
-  let solution: string | null = null;
+  const found: { solution: string | null } = { solution: null };
   const freeStates = Array.from(
     { length: maxDepth + 1 },
     () => new SearchState().setTables(mt, pt),
   );
 
-  const phase1 = (state: SearchState, depth: number) => {
-    if (solution !== null) return;
+  const phase1 = (ss: SearchState, depth: number) => {
+    if (found.solution !== null) return;
     if (depth === 0) {
-      if (state.minDist1() === 0 && (state.lastMove === null || !allMoves2.includes(state.lastMove))) {
-        phase2search(state);
+      if (ss.minDist1() === 0 && (ss.lastMove === null || !allMoves2.includes(ss.lastMove))) {
+        phase2search(ss);
       }
-    } else if (state.minDist1() <= depth) {
-      const candidates = state.lastMove !== null
-        ? nextMoves1[Math.floor(state.lastMove / 3)]
+    } else if (ss.minDist1() <= depth) {
+      const candidates = ss.lastMove !== null
+        ? nextMoves1[Math.floor(ss.lastMove / 3)]
         : allMoves1;
       for (const move of candidates) {
         const next = freeStates.pop()!;
-        next.parent   = state;
+        next.parent   = ss;
         next.lastMove = move;
-        next.depth    = state.depth + 1;
-        next.flip     = mt.flip [state.flip ][move];
-        next.twist    = mt.twist[state.twist][move];
-        next.slice    = Math.floor(mt.FRtoBR[state.slice * 24][move] / 24);
+        next.depth    = ss.depth + 1;
+        next.flip     = mt.flip [ss.flip ][move];
+        next.twist    = mt.twist[ss.twist][move];
+        next.slice    = Math.floor(mt.FRtoBR[ss.slice * 24][move] / 24);
         phase1(next, depth - 1);
         freeStates.push(next);
-        if (solution !== null) return;
+        if (found.solution !== null) return;
       }
     }
   };
 
-  const phase2search = (state: SearchState) => {
-    state.init2();
-    for (let depth = 1; depth <= maxDepth - state.depth; depth++) {
-      phase2(state, depth);
-      if (solution !== null) return;
+  const phase2search = (ss: SearchState) => {
+    ss.init2();
+    for (let depth = 1; depth <= maxDepth - ss.depth; depth++) {
+      phase2(ss, depth);
+      if (found.solution !== null) return;
     }
   };
 
-  const phase2 = (state: SearchState, depth: number) => {
-    if (solution !== null) return;
+  const phase2 = (ss: SearchState, depth: number) => {
+    if (found.solution !== null) return;
     if (depth === 0) {
-      if (state.minDist2() === 0) solution = state.solution();
-    } else if (state.minDist2() <= depth) {
-      const candidates = state.lastMove !== null
-        ? nextMoves2[Math.floor(state.lastMove / 3)]
+      if (ss.minDist2() === 0) found.solution = ss.solution();
+    } else if (ss.minDist2() <= depth) {
+      const candidates = ss.lastMove !== null
+        ? nextMoves2[Math.floor(ss.lastMove / 3)]
         : allMoves2;
       for (const move of candidates) {
         const next = freeStates.pop()!;
-        next.parent    = state;
+        next.parent    = ss;
         next.lastMove  = move;
-        next.depth     = state.depth + 1;
-        next.URFtoDLF  = mt.URFtoDLF[state.URFtoDLF][move];
-        next.FRtoBR    = mt.FRtoBR  [state.FRtoBR  ][move];
-        next.parity    = mt.parity  [state.parity  ][move];
-        next.URtoDF    = mt.URtoDF  [state.URtoDF  ][move];
+        next.depth     = ss.depth + 1;
+        next.URFtoDLF  = mt.URFtoDLF[ss.URFtoDLF][move];
+        next.FRtoBR    = mt.FRtoBR  [ss.FRtoBR  ][move];
+        next.parity    = mt.parity  [ss.parity  ][move];
+        next.URtoDF    = mt.URtoDF  [ss.URtoDF  ][move];
         phase2(next, depth - 1);
         freeStates.push(next);
-        if (solution !== null) return;
+        if (found.solution !== null) return;
       }
     }
   };
@@ -158,8 +158,7 @@ function _solveUpright(cube: Cube, maxDepth: number): string | null {
   const root = freeStates.pop()!.initFromCube(cube);
   for (let depth = 1; depth <= maxDepth; depth++) {
     phase1(root, depth);
-    if (solution !== null) break;
+    if (found.solution !== null) break;
   }
-  const result: string | null = solution;
-  return result ? result.trim() : null;
+  return found.solution !== null ? found.solution.trim() : null;
 }
