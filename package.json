@@ -1,5 +1,5 @@
 {
-  "name": "@mrrtmob/rubik-solver",
+  "name": "rubik-solver",
   "publishConfig": {
     "access": "public"
   },
