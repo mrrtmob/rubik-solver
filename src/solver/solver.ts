@@ -63,9 +63,33 @@ export function solve(cube: Cube, maxDepth = 22): string | null {
 }
 
 /** Generates a random scramble sequence. */
-export function scramble(): string {
+export function scramble(length = 25): string {
   initSolver();
-  return Cube.inverse(solve(Cube.random()) ?? '');
+  const faces    = [0, 1, 2, 3, 4, 5];
+  const names    = ['U', 'D', 'R', 'L', 'F', 'B'];
+  const mods     = ['', "'", '2'];
+  const opposite = [1, 0, 3, 2, 5, 4];
+
+  const result: string[] = [];
+  let last = -1;
+  let secondLast = -1;
+
+  while (result.length < length) {
+    const available = faces.filter(f => {
+      if (f === last) return false;
+      if (f === opposite[last]) return false;
+      if (f === secondLast && opposite[secondLast] === last) return false;
+      return true;
+    });
+
+    const face = available[Math.floor(Math.random() * available.length)];
+    const mod  = mods[Math.floor(Math.random() * mods.length)];
+    result.push(names[face] + mod);
+    secondLast = last;
+    last = face;
+  }
+
+  return result.join(' ');
 }
 
 // ── Internal two-phase search ─────────────────────────────────────
